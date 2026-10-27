@@ -1,0 +1,101 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build: g++ 当前文件 (debug)",
+      "type": "shell",
+      "command": "D:\\MinGW\\mingw32\\bin\\g++.exe",
+      "args": [
+        "-g",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "${file}",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "使用 MinGW g++ 编译并生成带调试信息的可执行文件"
+    },
+    {
+      "label": "build: gcc 当前文件 (debug)",
+      "type": "shell",
+      "command": "D:\\MinGW\\mingw32\\bin\\gcc.exe",
+      "args": [
+        "-g",
+        "-std=c17",
+        "-Wall",
+        "-Wextra",
+        "${file}",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": "build",
+      "detail": "使用 MinGW gcc 编译 C 文件并生成带调试信息的可执行文件"
+    },
+    {
+      "label": "build: g++ 当前文件 (release)",
+      "type": "shell",
+      "command": "D:\\MinGW\\mingw32\\bin\\g++.exe",
+      "args": [
+        "-O2",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "${file}",
+        "-o",
+        "${fileDirname}\\${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": "build",
+      "detail": "优化编译当前 C++ 文件"
+    },
+    {
+      "label": "run: 运行当前 C/C++ 程序",
+      "type": "shell",
+      "command": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "dependsOn": "build: g++ 当前文件 (debug)",
+      "problemMatcher": [],
+      "detail": "先编译再运行当前 C/C++ 文件"
+    },
+    {
+      "label": "npm: install",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "detail": "安装项目依赖"
+    },
+    {
+      "label": "npm: start",
+      "type": "shell",
+      "command": "npm",
+      "args": ["start"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "detail": "运行 package.json 中的 start 脚本"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "name": "Vsc_F",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "window.title": "Vsc_F — ${activeEditorShort}${separator}${rootName}"
+  }
+}

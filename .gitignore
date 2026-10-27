@@ -1,0 +1,46 @@
+# 编译产物
+*.exe
+*.o
+*.obj
+*.out
+a.out
+
+# 调试符号 / 缓存
+.vs/
+.vscode/ipch/
+*.pdb
+*.ilk
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# SSH 密钥，绝对不能提交
+.ssh/
+*.pem
+id_rsa*
+id_ed25519*
+
+# 运行存档
+*.dat
+
+# Linux 可执行文件
+2048.2
+
+# 本地原始单文件版本，不提交
+src/2048.c
