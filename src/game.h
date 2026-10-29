@@ -3,12 +3,12 @@
 
 #include "board.h" /* game 用到 SIZE，从 board.h 拿 */
 
-int addrand(int board[SIZE][SIZE]);
-int board_changed(int board[SIZE][SIZE], int oldboard[SIZE][SIZE]);
-void left_move(int board[SIZE][SIZE]);
-void right_move(int board[SIZE][SIZE]);
-void up_move(int board[SIZE][SIZE]);
-void down_move(int board[SIZE][SIZE]);
-int game_over(int board[SIZE][SIZE]);
+int addrand(Board *b);
+int board_changed(const Board *a, const Board *b);
+void left_move(Board *b);
+void right_move(Board *b);
+void up_move(Board *b);
+void down_move(Board *b);
+int game_over(const Board *b);
 
 #endif

@@ -1,36 +1,38 @@
 #include "game.h"
 #include <stdlib.h> /* addrand 用 rand()，需要它 */
+
 // 游戏结束
-int game_over(int board[SIZE][SIZE])
+int game_over(const Board *b)
 {
     // 棋盘内存在空格，继续游戏
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            if (board[i][j] == 0)
+            if (b->cell[i][j] == 0)
             {
                 return 0;
             }
         }
     }
     // 如果棋盘内行中，还有相同的项，游戏继续
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        for (int j = 0; j < SIZE; j++)
+        // 注意：这里 j < b->size - 1，防止 b->cell[i][j + 1] 越界
+        for (int j = 0; j < b->size - 1; j++)
         {
-            if (board[i][j] == board[i][j + 1])
+            if (b->cell[i][j] == b->cell[i][j + 1])
             {
                 return 0;
             }
         }
     }
     // 如果列内还有相同的项，游戏继续
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size - 1; i++)
     {
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            if (board[i][j] == board[i + 1][j])
+            if (b->cell[i][j] == b->cell[i + 1][j])
             {
                 return 0;
             }
@@ -40,15 +42,15 @@ int game_over(int board[SIZE][SIZE])
 }
 
 // 添加随机数2或4
-int addrand(int board[SIZE][SIZE])
+int addrand(Board *b)
 {
     int emptycount = 0;
 
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            if (board[i][j] == 0)
+            if (b->cell[i][j] == 0)
             {
                 emptycount++;
             }
@@ -61,22 +63,20 @@ int addrand(int board[SIZE][SIZE])
     }
     // 随机选择一个空格
     int target = rand() % emptycount;
-    // 保存行
     int row = 0;
-    // 保存列
     int col = 0;
 
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            if (board[i][j] == 0)
+            if (b->cell[i][j] == 0)
             {
                 if (target == 0)
                 {
                     row = i;
                     col = j;
-                    i = SIZE;
+                    i = b->size; // 跳出外层循环
                     break;
                 }
                 target--;
@@ -84,19 +84,19 @@ int addrand(int board[SIZE][SIZE])
         }
     }
     int number = (rand() % 2 == 0) ? 2 : 4;
-    board[row][col] = number;
+    b->cell[row][col] = number;
 
     return 1;
 }
 
 // 比较两个棋盘，不同返回1，相同返回0
-int board_changed(int board[SIZE][SIZE], int oldboard[SIZE][SIZE])
+int board_changed(const Board *a, const Board *b)
 {
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < a->size; i++)
     {
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < a->size; j++)
         {
-            if (board[i][j] != oldboard[i][j])
+            if (a->cell[i][j] != b->cell[i][j])
             {
                 return 1;
             }
@@ -106,23 +106,23 @@ int board_changed(int board[SIZE][SIZE], int oldboard[SIZE][SIZE])
 }
 
 // 左移动
-void left_move(int board[SIZE][SIZE])
+void left_move(Board *b)
 {
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        int temp[SIZE] = {0};
+        int temp[MAX_SIZE] = {0}; // 必须用 MAX_SIZE 分配，不能写 b->size
         int index = 0;
 
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            if (board[i][j] != 0)
+            if (b->cell[i][j] != 0)
             {
-                temp[index] = board[i][j];
+                temp[index] = b->cell[i][j];
                 index++;
             }
         }
 
-        for (int j = 0; j < SIZE - 1; j++)
+        for (int j = 0; j < b->size - 1; j++)
         {
             if (temp[j] != 0 && temp[j] == temp[j + 1])
             {
@@ -132,7 +132,7 @@ void left_move(int board[SIZE][SIZE])
             }
         }
         index = 0;
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
             if (temp[j] != 0)
             {
@@ -140,36 +140,36 @@ void left_move(int board[SIZE][SIZE])
                 index++;
             }
         }
-        while (index < SIZE)
+        while (index < b->size)
         {
             temp[index] = 0;
             index++;
         }
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            board[i][j] = temp[j];
+            b->cell[i][j] = temp[j];
         }
     }
 }
 
 // 右移动
-void right_move(int board[SIZE][SIZE])
+void right_move(Board *b)
 {
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        int temp[SIZE] = {0};
-        int index = SIZE - 1;
+        int temp[MAX_SIZE] = {0};
+        int index = b->size - 1;
 
-        for (int j = SIZE - 1; j >= 0; j--)
+        for (int j = b->size - 1; j >= 0; j--)
         {
-            if (board[i][j] != 0)
+            if (b->cell[i][j] != 0)
             {
-                temp[index] = board[i][j];
+                temp[index] = b->cell[i][j];
                 index--;
             }
         }
 
-        for (int j = SIZE - 1; j >= 1; j--)
+        for (int j = b->size - 1; j >= 1; j--)
         {
             if (temp[j] != 0 && temp[j] == temp[j - 1])
             {
@@ -178,8 +178,8 @@ void right_move(int board[SIZE][SIZE])
                 j--;
             }
         }
-        index = SIZE - 1;
-        for (int j = SIZE - 1; j >= 0; j--)
+        index = b->size - 1;
+        for (int j = b->size - 1; j >= 0; j--)
         {
             if (temp[j] != 0)
             {
@@ -192,31 +192,31 @@ void right_move(int board[SIZE][SIZE])
             temp[index] = 0;
             index--;
         }
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j < b->size; j++)
         {
-            board[i][j] = temp[j];
+            b->cell[i][j] = temp[j];
         }
     }
 }
 
 // 上移动
-void up_move(int board[SIZE][SIZE])
+void up_move(Board *b)
 {
-    for (int j = 0; j < SIZE; j++)
+    for (int j = 0; j < b->size; j++)
     {
-        int temp[SIZE] = {0};
+        int temp[MAX_SIZE] = {0};
         int index = 0;
 
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < b->size; i++)
         {
-            if (board[i][j] != 0)
+            if (b->cell[i][j] != 0)
             {
-                temp[index] = board[i][j];
+                temp[index] = b->cell[i][j];
                 index++;
             }
         }
 
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < b->size - 1; i++)
         {
             if (temp[i] != 0 && temp[i] == temp[i + 1])
             {
@@ -226,7 +226,7 @@ void up_move(int board[SIZE][SIZE])
             }
         }
         index = 0;
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < b->size; i++)
         {
             if (temp[i] != 0)
             {
@@ -235,47 +235,49 @@ void up_move(int board[SIZE][SIZE])
             }
         }
 
-        while (index < SIZE)
+        while (index < b->size)
         {
             temp[index] = 0;
             index++;
         }
 
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < b->size; i++)
         {
-            board[i][j] = temp[i];
+            b->cell[i][j] = temp[i];
         }
     }
 }
 
 // 下移动
-void down_move(int board[SIZE][SIZE])
+void down_move(Board *b)
 {
-    for (int j = 0; j < SIZE; j++)
+    for (int j = 0; j < b->size; j++)
     {
-        int temp[SIZE] = {0};
-        int index = SIZE - 1;
+        int temp[MAX_SIZE] = {0};
+        int index = b->size - 1;
 
-        for (int i = SIZE - 1; i >= 0; i--)
+        for (int i = b->size - 1; i >= 0; i--)
         {
-            if (board[i][j] != 0)
+            if (b->cell[i][j] != 0)
             {
-                temp[index] = board[i][j];
+                temp[index] = b->cell[i][j];
                 index--;
             }
         }
 
-        for (int i = SIZE; i >= 1; i--)
+        // 修正了原来的越界 bug 和合并逻辑
+        for (int i = b->size - 1; i >= 1; i--)
         {
             if (temp[i] != 0 && temp[i] == temp[i - 1])
             {
                 temp[i] *= 2;
-                temp[i + 1] = 0;
+                temp[i - 1] = 0;
                 i--;
             }
         }
-        index = SIZE - 1;
-        for (int i = SIZE - 1; i >= 0; i--)
+
+        index = b->size - 1;
+        for (int i = b->size - 1; i >= 0; i--)
         {
             if (temp[i] != 0)
             {
@@ -290,9 +292,9 @@ void down_move(int board[SIZE][SIZE])
             index--;
         }
 
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < b->size; i++)
         {
-            board[i][j] = temp[i];
+            b->cell[i][j] = temp[i];
         }
     }
 }

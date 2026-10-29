@@ -10,18 +10,18 @@
 #include "game.h"
 #include "ui.h"
 
-
-
-int main()
+int main(void)
 {
-    int board[SIZE][SIZE] = {0};
+    Board board;
+    board_init(&board, 4); // 默认初始化为 4x4 棋盘
+
     int gamevoer = 0;
     // 设置随机种子
     srand((unsigned int)time(NULL));
 
-    addrand(board);
-    addrand(board);
-    print_board(board);
+    addrand(&board);
+    addrand(&board);
+    print_board(&board);
 
     while (1)
     {
@@ -39,12 +39,12 @@ int main()
 
         if (key == 'r')
         {
-            rester_board(board);
-            addrand(board);
-            addrand(board);
+            board_init(&board, board.size); // 重置时保留当前尺寸
+            addrand(&board);
+            addrand(&board);
             gamevoer = 0;
             system("cls");
-            print_board(board);
+            print_board(&board);
             continue;
         }
 
@@ -53,46 +53,40 @@ int main()
             continue;
         }
 
-        int oldboard[SIZE][SIZE];
-        for (int i = 0; i < SIZE; i++)
-        {
-            for (int j = 0; j < SIZE; j++)
-            {
-                oldboard[i][j] = board[i][j];
-            }
-        }
+        // 现在的 Board 结构体可以直接整体赋值拷贝，不需要再写两层 for 循环
+        Board oldboard = board;
 
         if (key == 'a')
         {
-            left_move(board);
+            left_move(&board);
         }
         else if (key == 'd')
         {
-            right_move(board);
+            right_move(&board);
         }
         else if (key == 'w')
         {
-            up_move(board);
+            up_move(&board);
         }
         else if (key == 's')
         {
-            down_move(board);
+            down_move(&board);
         }
         else
         {
             continue;
         }
 
-        int moved = board_changed(board, oldboard);
+        int moved = board_changed(&board, &oldboard);
         if (moved == 1)
         {
-            addrand(board);
+            addrand(&board);
         }
 
         system("cls");
-        print_board(board);
+        print_board(&board);
 
-        if (game_over(board) == 1)
+        if (game_over(&board) == 1)
         {
             printf("\nGAME OVER!\nPress R to restart or Q to quit.\n");
             gamevoer = 1;

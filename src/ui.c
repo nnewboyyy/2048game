@@ -1,26 +1,40 @@
 #include "ui.h"
-#include <stdio.h> /* print_board 用 printf，需要它 */
+#include <stdio.h>
+
 // 打印棋盘
-void print_board(int board[SIZE][SIZE])
+void print_board(const Board *b)
 {
     printf("move:w/a/s/d restar:r quit:q\n\n");
 
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < b->size; i++)
     {
-        printf("+------+------+------+------+\n");
-        printf("|");
-        for (int j = 0; j < SIZE; j++)
+        // 动态打印上边框
+        for (int j = 0; j < b->size; j++)
         {
-            if (board[i][j] == 0)
+            printf("+------");
+        }
+        printf("+\n");
+
+        // 打印数据行
+        printf("|");
+        for (int j = 0; j < b->size; j++)
+        {
+            if (b->cell[i][j] == 0)
             {
                 printf("      |");
             }
             else
             {
-                printf("%6d|", board[i][j]);
+                printf("%6d|", b->cell[i][j]);
             }
         }
         printf("\n");
     }
-    printf("+------+------+------+------+\n");
+
+    // 打印底边框
+    for (int j = 0; j < b->size; j++)
+    {
+        printf("+------");
+    }
+    printf("+\n");
 }

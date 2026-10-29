@@ -3,6 +3,6 @@
 
 #include "board.h"
 
-void print_board(int board[SIZE][SIZE]);
+void print_board(const Board *b);
 
 #endif
