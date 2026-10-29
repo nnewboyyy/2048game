@@ -1,5 +1,5 @@
 CC       = gcc
-CFLAGS   = -std=c11 -Wall -Wextra -Isrc
+CFLAGS   = -std=c11 -Wall -Wextra -Werror -Isrc
 SRC      = $(wildcard src/*.c)
 OBJ      = $(SRC:.c=.o)
 TARGET   = game.exe
