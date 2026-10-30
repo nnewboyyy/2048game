@@ -4,7 +4,7 @@
 // 打印棋盘
 void print_board(const Board *b)
 {
-    printf("move:w/a/s/d restar:r quit:q\n\n");
+    printf("move:w/a/s/d undo:u switch: t restar:r quit:q\n\n");
 
     for (int i = 0; i < b->size; i++)
     {

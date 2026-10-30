@@ -9,13 +9,17 @@
 #include "board.h"
 #include "game.h"
 #include "ui.h"
+#include "history.h" //历史栈头文件
 
 int main(void)
 {
     Board board;
     board_init(&board, 4); // 默认初始化为 4x4 棋盘
 
-    int gamevoer = 0;
+    History history;
+    history_init(&history);
+
+    int gameover = 0;
     // 设置随机种子
     srand((unsigned int)time(NULL));
 
@@ -40,15 +44,43 @@ int main(void)
         if (key == 'r')
         {
             board_init(&board, board.size); // 重置时保留当前尺寸
+            history_init(&history);
             addrand(&board);
             addrand(&board);
-            gamevoer = 0;
+            gameover = 0;
+            system("cls");
+            print_board(&board);
+            continue;
+        }
+        // 撤销功能
+        if (key == 'u')
+        {
+            if (history_pop(&history, &board))
+            {
+                system("cls");
+                print_board(&board);
+
+                gameover = 0;
+            }
+            continue;
+        }
+
+        if (key == 't')
+        {
+            int new_size = (board.size == 4) ? 5 : 4;
+            board_init(&board, new_size);
+            history_init(&history);
+            gameover = 0;
+
+            addrand(&board);
+            addrand(&board);
+
             system("cls");
             print_board(&board);
             continue;
         }
 
-        if (gamevoer == 1)
+        if (gameover == 1)
         {
             continue;
         }
@@ -80,16 +112,17 @@ int main(void)
         int moved = board_changed(&board, &oldboard);
         if (moved == 1)
         {
+            history_push(&history, &oldboard);
+
             addrand(&board);
-        }
+            system("cls");
+            print_board(&board);
 
-        system("cls");
-        print_board(&board);
-
-        if (game_over(&board) == 1)
-        {
-            printf("\nGAME OVER!\nPress R to restart or Q to quit.\n");
-            gamevoer = 1;
+            if (game_over(&board) == 1)
+            {
+                printf("\nGAME OVER!\nPress R to restart or Q to quit.\n");
+                gameover = 1;
+            }
         }
     }
 
